@@ -1,18 +1,16 @@
 class reg_intr extends uvm_reg;
     `uvm_object_utils(reg_intr)
     rand uvm_reg_field intr_status; //ro
-    rand uvm_reg_field intr_mask;   //ro
+    rand uvm_reg_field intr_mask;   //rw
 
     covergroup cg_intr;
-        cp_status: coverpoint intr_status.value[15:0]{
+/*        cp_status: coverpoint intr_status.value[15:0]{
             bins min = {0};
             bins max = {16'hFFFF};
             bins other_vals = {[16'h1 : 16'hFFFE]};
-        }
+        }*/
         cp_mask: coverpoint intr_mask.value[15:0] {
-            bins min = {0};
-            bins max = {16'hFFFF};
-            bins other_vals = {[16'h1 : 16'hFFFE]};
+            bins vals[3] = {[16'h1 : 16'hFFFF]};
         }
     endgroup: cg_intr
 
@@ -53,20 +51,18 @@ class reg_ctrl extends uvm_reg;
             bins min = {0};
             bins max = {1};
         }
-        cp_mask: coverpoint w_count.value[15:1] {
-            bins min = {0};
-            bins max = {15'h7FFF};
-            bins other_vals = {[15'h1 : 15'h7FFE]};
+        cp_w_count: coverpoint w_count.value[15:1] { 
+            bins vals[3] = {[15'h1 : 15'h7FFF]};
         }
         cp_io_mem: coverpoint io_mem.value[16]{
             bins min = {0};
             bins max = {1};
         }
-        cp_reserved: coverpoint reserved.value[31:17] {
+/*        cp_reserved: coverpoint reserved.value[31:17] {
             bins min = {0};
             bins max = {15'h7FFF};
             bins other_vals = {[15'h1 : 15'h7FFE]};
-        }
+        }*/
     endgroup: cg_ctrl
 
     function new(string name = "reg_ctrl");
@@ -105,10 +101,8 @@ class reg_io_addr extends uvm_reg;
     rand uvm_reg_field io_addr;	//rw
 
     covergroup cg_io_addr;
-        cp_status: coverpoint io_addr.value[31:0]{
-            bins min = {0};
-            bins max = {32'hFFFF_FFFF};
-            bins other_vals = {[32'h1 : 32'hFFFF_FFFE]};
+        cp_io_addr: coverpoint io_addr.value[31:0]{ 
+            bins vals[3] = {[32'h1 : 32'hFFFF_FFFF]};
         }
     endgroup: cg_io_addr
 
@@ -140,10 +134,8 @@ class reg_mem_addr extends uvm_reg;
     rand uvm_reg_field mem_addr;	//rw
 
     covergroup cg_mem_addr;
-        cp_status: coverpoint mem_addr.value[31:0]{
-            bins min = {0};
-            bins max = {32'hFFFF_FFFF};
-            bins other_vals = {[32'h1 : 32'hFFFF_FFFE]};
+        cp_mem_addr: coverpoint mem_addr.value[31:0]{ 
+            bins vals[3] = {[32'h1 : 32'hFFFF_FFFF]};
         }
     endgroup: cg_mem_addr
 
@@ -163,7 +155,7 @@ class reg_mem_addr extends uvm_reg;
 
     function void build();
         mem_addr = uvm_reg_field::type_id::create("mem_addr");
-        mem_addr.configure(	.parent(this), .size(32), .lsb_pos(0), .access("RW"), .volatile(0), .reset(32'h0), .has_reset(1), .is_rand(1), .individually_accessible(1)	);
+        mem_addr.configure( .parent(this), .size(32), .lsb_pos(0), .access("RW"), .volatile(0), .reset(32'h0), .has_reset(1), .is_rand(1), .individually_accessible(1)	);
 
     endfunction
 
@@ -175,10 +167,8 @@ class reg_extra_info extends uvm_reg;
     rand uvm_reg_field extra_info;	//rw
 
     covergroup cg_extra_info;
-        cp_status: coverpoint extra_info.value[31:0]{
-            bins min = {0};
-            bins max = {32'hFFFF_FFFF};
-            bins other_vals = {[32'h1 : 32'hFFFF_FFFE]};
+        cp_extra_info: coverpoint extra_info.value[31:0]{ 
+            bins vals[3] = {[32'h1 : 32'hFFFF_FFFF]};
         }
     endgroup: cg_extra_info
 
@@ -215,54 +205,9 @@ class reg_status extends uvm_reg;
     rand uvm_reg_field fifo_level;		//ro
     rand uvm_reg_field reserved;		//ro
 
-    covergroup cg_status;
-        cp_busy: coverpoint busy.value[0]{
-            bins min = {0};
-            bins max = {1};
-        }
-        cp_done: coverpoint done.value[1]{
-            bins min = {0};
-            bins max = {1};
-        }
-        cp_error: coverpoint error.value[2]{
-            bins min = {0};
-            bins max = {1};
-        }
-        cp_paused: coverpoint paused.value[3]{
-            bins min = {0};
-            bins max = {1};
-        }
-        cp_current_state: coverpoint current_state.value[7:4]{
-            bins min = {0};
-            bins max = {4'hF};
-            bins other_vals = {[4'h1 : 4'hE]};
-        }
-        cp_fifo_level: coverpoint fifo_level.value[15:8]{
-            bins min = {0};
-            bins max = {8'hFF};
-            bins other_vals = {[8'h1 : 8'hFE]};
-        }
-        cp_reserved: coverpoint reserved.value[31:16]{
-            bins min = {0};
-            bins max = {16'hFFFF};
-            bins other_vals = {[16'h1 : 16'hFFFE]};
-        }
-
-    endgroup: cg_status
-
     function new(string name = "reg_status");
-        super.new(name, 32, UVM_CVR_FIELD_VALS);
-        if(has_coverage(UVM_CVR_FIELD_VALS)) 
-            cg_status = new();
+        super.new(name, 32, UVM_NO_COVERAGE);
     endfunction: new
-
-    virtual function void sample(uvm_reg_data_t data, uvm_reg_data_t byte_en, bit is_read, uvm_reg_map map);
-        cg_status.sample();
-    endfunction: sample
-    virtual function void sample_values();
-        super.sample_values();
-        cg_status.sample();
-    endfunction: sample_values
 
     function void build();
         busy = uvm_reg_field::type_id::create("busy");
@@ -295,31 +240,13 @@ class reg_transfer_count extends uvm_reg;
     `uvm_object_utils(reg_transfer_count)
     rand uvm_reg_field transfer_count;	//ro
 
-    covergroup cg_transfer_count;
-        cp_status: coverpoint transfer_count.value[31:0]{
-            bins min = {0};
-            bins max = {32'hFFFF_FFFF};
-            bins other_vals = {[32'h1 : 32'hFFFF_FFFE]};
-        }
-    endgroup: cg_transfer_count
-
     function new(string name = "reg_transfer_count");
-        super.new(name, 32, UVM_CVR_FIELD_VALS);
-        if(has_coverage(UVM_CVR_FIELD_VALS)) 
-            cg_transfer_count= new();
+        super.new(name, 32, UVM_NO_COVERAGE);
     endfunction: new
-
-    virtual function void sample(uvm_reg_data_t data, uvm_reg_data_t byte_en, bit is_read, uvm_reg_map map);
-        cg_transfer_count.sample();
-    endfunction: sample
-    virtual function void sample_values();
-        super.sample_values();
-        cg_transfer_count.sample();
-    endfunction: sample_values
 
     function void build();
         transfer_count = uvm_reg_field::type_id::create("transfer_count");
-        transfer_count.configure(	.parent(this), .size(32), .lsb_pos(0), .access("RO"), .volatile(1), .reset(32'h0), .has_reset(1), .is_rand(0), .individually_accessible(1)	);
+        transfer_count.configure( .parent(this), .size(32), .lsb_pos(0), .access("RO"), .volatile(1), .reset(32'h0), .has_reset(1), .is_rand(0), .individually_accessible(1)	);
 
     endfunction
 
@@ -331,10 +258,8 @@ class reg_descriptor_addr extends uvm_reg;
     rand uvm_reg_field descriptor_addr;	//rw
 
     covergroup cg_descriptor_addr;
-        cp_status: coverpoint descriptor_addr.value[31:0]{
-            bins min = {0};
-            bins max = {32'hFFFF_FFFF};
-            bins other_vals = {[32'h1 : 32'hFFFF_FFFE]};
+        cp_status: coverpoint descriptor_addr.value[31:0]{ 
+            bins vals[3] = {[32'h1 : 32'hFFFF_FFFF]};
         }
     endgroup: cg_descriptor_addr
 
@@ -368,8 +293,8 @@ class reg_error_status extends uvm_reg;
     rand uvm_reg_field alignment_error;		//rw1c
     rand uvm_reg_field overflow_error;		//rw1c
     rand uvm_reg_field underflow_error;		//rw1c
-    rand uvm_reg_field reserved;			//ro
-    rand uvm_reg_field error_code;			//ro
+    rand uvm_reg_field reserved;		//ro
+    rand uvm_reg_field error_code;		//ro
     rand uvm_reg_field error_addr_offset; 	//ro
 
     covergroup cg_error_status;
@@ -393,21 +318,6 @@ class reg_error_status extends uvm_reg;
             bins min = {0};
             bins max = {1};
         }
-        cp_reserved: coverpoint reserved.value[7:5]{
-            bins reserved_bins = {[0:7]};
-        }
-
-        cp_error_code: coverpoint error_code.value[15:8]{
-            bins min = {0};
-            bins max = {8'hFF};
-            bins other_vals = {[8'h1 : 8'hFE]};
-        }
-        cp_error_addr_offset: coverpoint error_addr_offset.value[31:16]{
-            bins min = {0};
-            bins max = {16'hFFFF};
-            bins other_vals = {[16'h1 : 16'hFFFE]};
-        }
-
     endgroup: cg_error_status
 
     function new(string name = "reg_error_status");
@@ -467,7 +377,7 @@ class reg_config extends uvm_reg;
 
     covergroup cg_config;
         cp_priority: coverpoint Priority.value[1:0]{
-            bins priority_bins[] = {0,1,2,3};
+            bins priority_bins[2] = {0,1,2,3};
         }
         cp_auto_restart: coverpoint auto_restart.value[2]{
             bins min = {0};
@@ -480,19 +390,12 @@ class reg_config extends uvm_reg;
         cp_burst_size: coverpoint burst_size.value[5:4]{
             bins burst_size_bins[] = {0,1,2,3};
         }
-        cp_data_width: coverpoint data_width.value[7:4]{
-            bins min = {0};
-            bins max = {4'hF};
-            bins other_vals = {[4'h1 : 4'hE]};
+        cp_data_width: coverpoint data_width.value[7:6]{
+            bins vals[2] = {0,1,2,3};
         }
         cp_descriptor_mode: coverpoint descriptor_mode.value[8]{
             bins min = {0};
             bins max = {1};
-        }
-        cp_reserved: coverpoint reserved.value[31:9]{
-            bins min = {0};
-            bins max = {23'h7F_FFFF};
-            bins other_vals = {[23'h1 : 23'h7F_FFFE]};
         }
 
     endgroup: cg_config

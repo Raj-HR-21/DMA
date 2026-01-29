@@ -15,7 +15,7 @@ class dma_driver extends uvm_driver#(dma_seq_item);
     virtual task run_phase(uvm_phase phase);
         repeat(1)@(vif.drv_cb);
         forever begin
-            
+
             seq_item_port.get_next_item(req);
             drive_task(req);
             seq_item_port.item_done();
@@ -27,19 +27,18 @@ class dma_driver extends uvm_driver#(dma_seq_item);
         vif.wr_en <= tx.wr_en;
         vif.rd_en <= tx.rd_en;
         if(tx.wr_en && !tx.rd_en) begin
-        repeat(1)@(vif.drv_cb);
             vif.wdata <= tx.wdata;
             $display("-------------------------------------------------------------------------------------------");
             `uvm_info(" DRV WRITE ", $sformatf("\n WR_EN = %b | RD_EN = %b | ADDR = %8h | WDATA = %8h | \n", tx.wr_en, tx.rd_en, tx.addr, tx.wdata), UVM_LOW)
             repeat(2)@(vif.drv_cb);
         end else vif.wdata <= 0;
         if(!tx.wr_en && tx.rd_en) begin
-            repeat(2)@(vif.drv_cb);
+        repeat(1)@(vif.drv_cb);
             tx.rdata = vif.rdata;
             $display("-------------------------------------------------------------------------------------------");
             `uvm_info(" DRV READ ", $sformatf("\n WR_EN = %b | RD_EN = %b | ADDR = %8h | WDATA = %8h | RDATA = %8h  \n", tx.wr_en, tx.rd_en, tx.addr, tx.wdata, tx.rdata), UVM_LOW)
             repeat(1)@(vif.drv_cb);
-        end 
+        end
 
     endtask: drive_task
 

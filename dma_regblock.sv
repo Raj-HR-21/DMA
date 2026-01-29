@@ -19,8 +19,8 @@ class dma_reg_block extends uvm_reg_block;
     
     function void build();
         uvm_reg::include_coverage("*", UVM_CVR_ALL);
-	//add hdl path
-	add_hdl_path("dut", "RTL");
+        //add hdl path
+        add_hdl_path("top.dut", "RTL");
 
         // 1. INTR 0x400
         intr_h = reg_intr::type_id::create("intr_h");
@@ -81,26 +81,47 @@ class dma_reg_block extends uvm_reg_block;
         config_h.build();
         config_h.configure(this);
         void'(config_h.set_coverage(UVM_CVR_FIELD_VALS));
-        
-	// hdl slice
-        intr_h.add_hdl_path_slice("intr_mask", 0, 16);
+
+        // hdl slice
         intr_h.add_hdl_path_slice("intr_status", 0, 16);
+        intr_h.add_hdl_path_slice("intr_mask", 16, 16);
 
         ctrl_h.add_hdl_path_slice("ctrl_start_dma", 0, 1);
-        ctrl_h.add_hdl_path_slice("ctrl_w_count", 0, 15);
-        ctrl_h.add_hdl_path_slice("ctrl_io_mem", 0, 1);
+        ctrl_h.add_hdl_path_slice("ctrl_w_count", 1, 15);
+        ctrl_h.add_hdl_path_slice("ctrl_io_mem", 16, 1);
 
         io_addr_h.add_hdl_path_slice("io_addr", 0, 32);
-        mem_addr_h.add_hdl_path_slice("mem_addr", 0, 32);
-	extra_info_h.add_hdl_path_slice("extra_info", 0, 32);
 
-/*
-        status_h.add_hdl_path_slice("", 0, 32);
-        transfer_count_h.add_hdl_path_slice("", 0, 32);
-        descriptor_addr_h.add_hdl_path_slice("", 0, 32);
-        error_status_h.add_hdl_path_slice("", 0, 32);
-        config_h.add_hdl_path_slice("", 0, 32);
-*/
+        mem_addr_h.add_hdl_path_slice("mem_addr", 0, 32);
+
+        extra_info_h.add_hdl_path_slice("extra_info", 0, 32);
+
+        status_h.add_hdl_path_slice("status_busy",  0, 1);
+        status_h.add_hdl_path_slice("status_done",  1, 1);
+        status_h.add_hdl_path_slice("status_error", 2, 1);
+        status_h.add_hdl_path_slice("status_paused",3, 1);
+        status_h.add_hdl_path_slice("status_current_state", 4, 4);
+        status_h.add_hdl_path_slice("status_fifo_level",    8, 8);
+
+        transfer_count_h.add_hdl_path_slice("transfer_count", 0, 32);
+
+        descriptor_addr_h.add_hdl_path_slice("descriptor_addr", 0, 32);
+
+        error_status_h.add_hdl_path_slice("error_bus", 0, 1);
+        error_status_h.add_hdl_path_slice("error_timeout", 1, 1);
+        error_status_h.add_hdl_path_slice("error_alignment", 2, 1);
+        error_status_h.add_hdl_path_slice("error_overflow", 3, 1);
+        error_status_h.add_hdl_path_slice("error_underflow", 4, 1);
+        error_status_h.add_hdl_path_slice("error_code", 8, 8);
+        error_status_h.add_hdl_path_slice("error_addr_offset", 16, 16);
+
+        config_h.add_hdl_path_slice("config_priority", 0, 2);
+        config_h.add_hdl_path_slice("config_auto_restart", 2, 1);
+        config_h.add_hdl_path_slice("config_interrupt_enable", 3, 1);
+        config_h.add_hdl_path_slice("config_burst_size", 4, 2);
+        config_h.add_hdl_path_slice("config_data_width", 6, 2);
+        config_h.add_hdl_path_slice("config_descriptor_mode", 8, 1);
+
         // address map
         reg_map = create_map("reg_map", 'h0, 4, UVM_LITTLE_ENDIAN);
         reg_map.add_reg(intr_h, 'h400, "RW");
@@ -116,7 +137,7 @@ class dma_reg_block extends uvm_reg_block;
 
         lock_model();
     endfunction: build 
-    
+
 endclass: dma_reg_block
 
 

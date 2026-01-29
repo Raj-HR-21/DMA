@@ -3,7 +3,9 @@ class dma_env extends uvm_env;
     dma_agent agt_h;
     dma_reg_block top_reg_h;
     dma_adapter adapter_h;
-    uvm_reg_predictor#(dma_seq_item) predictor_h;
+    dma_predictor#(dma_seq_item) predictor_h;
+
+    //    uvm_reg_predictor#(dma_seq_item) predictor_h;
 
 
     function new(string name = "dma_env", uvm_component parent = null);
@@ -13,7 +15,7 @@ class dma_env extends uvm_env;
         super.build_phase(phase);
         agt_h = dma_agent::type_id::create("agt_h", this);
 		//predictor
-        predictor_h = uvm_reg_predictor#(dma_seq_item)::type_id::create("predictor_h", this);
+        predictor_h = dma_predictor#(dma_seq_item)::type_id::create("predictor_h", this);
 
 		// register top block
         top_reg_h = dma_reg_block::type_id::create("top_reg_h", this);

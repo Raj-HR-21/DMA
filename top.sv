@@ -1,18 +1,17 @@
 `include "uvm_macros.svh"
-`include "uvm_pkg.sv"
+import uvm_pkg::*;
 `include "dma_intf.sv"
 `include "dma_design.v"
-`include "package.sv"
+`include "package.svh"
+import dma_pkg::*;
 
 module top;
-    import uvm_pkg::*;
-	import dma_pkg::*;
 
     bit clk, rst_n;
     dma_intf intf(clk, rst_n);
 
     // dut instance
-	dma_design dut(.clk(clk), .rst_n(intf.rst_n), .wr_en(intf.wr_en), .rd_en(intf.rd_en), .wdata(intf.wdata), .addr(intf.addr), .rdata(intf.rdata));
+    dma_design dut(.clk(clk), .rst_n(rst_n), .wr_en(intf.wr_en), .rd_en(intf.rd_en), .wdata(intf.wdata), .addr(intf.addr), .rdata(intf.rdata));
     
     always #5 clk = ~clk;
     initial begin
@@ -27,9 +26,8 @@ module top;
     end
 
     initial begin
-	run_test("dma_test");
-//	run_test("reset_test");
-    end
+	run_test("dma_test_1");
+  end
 
     initial begin
         $dumpfile("wave.vcd");

@@ -19,7 +19,7 @@ class dma_monitor extends uvm_monitor;
         repeat(1)@(vif.mon_cb);
         forever begin
             in_item = dma_seq_item::type_id::create("in_item");
-            repeat(3)@(vif.mon_cb);
+            repeat(2)@(vif.mon_cb);
 
             in_item.wr_en = vif.wr_en;
             in_item.rd_en = vif.rd_en;
