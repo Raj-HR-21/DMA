@@ -708,7 +708,7 @@ class regression_seq extends uvm_sequence#(dma_seq_item);
         rst = reset_seq::type_id::create("rst");
         rst.top_reg_h = top_reg_h;
         rst.start(m_sequencer);
-        repeat(10) begin
+        repeat(20) begin
             s1 = intr_seq::type_id::create("s1");
             s1.top_reg_h = top_reg_h;
             s1.start(m_sequencer);
@@ -803,13 +803,7 @@ class sample_seq extends uvm_sequence#(dma_seq_item);
                 `uvm_info("SEQ-STATUS", $sformatf(" FD Read: des = %0h | mir = %0h", des, mir), UVM_LOW)
 
                 // 7. TRANSFER_COUNT ro
-/*
-                top_reg_h.transfer_count_h.peek(status, rdata);
-                des = top_reg_h.transfer_count_h.get();
-                mir = top_reg_h.transfer_count_h.get_mirrored_value();
-                $display("\t\t\t rdata :  %b", rdata);
-                `uvm_info("SEQ-TRANSFER_COUNT", $sformatf(" BD Read: des = %0h | mir = %0h\n ", des, mir), UVM_LOW)
-*/
+
                 top_reg_h.transfer_count_h.mirror(status, UVM_STATUS);
                 des = top_reg_h.transfer_count_h.get();
                 mir = top_reg_h.transfer_count_h.get_mirrored_value();
@@ -827,25 +821,9 @@ class sample_seq extends uvm_sequence#(dma_seq_item);
                 $display("\t\t\t wdata : start_dma = %0h | w_count = %0h | io_mem = %0h", wdata[0], wdata[15:1], wdata[16]);
                 $display("\t\t\t wdata :  %b", wdata);
                 `uvm_info("SEQ-CTRL", $sformatf(" FD Write: des = %0h | mir = %0h\n ", des, mir), UVM_LOW)
-                /*
-                top_reg_h.ctrl_h.peek(status, rdata);
-                des = top_reg_h.ctrl_h.get();
-                mir = top_reg_h.ctrl_h.get_mirrored_value();
-                `uvm_info("SEQ-CTRL", $sformatf(" BD Read: des = %0h | mir = %0h\n ", des, mir), UVM_LOW)
-                top_reg_h.ctrl_h.read(status, rdata);
-                des = top_reg_h.ctrl_h.get();
-                mir = top_reg_h.ctrl_h.get_mirrored_value();
-                `uvm_info("SEQ-CTRL", $sformatf("FD Read: des = %0h | mir = %0h", des, mir), UVM_LOW)
-                */
+
                 // 6. STATUS ro
-/*
-                top_reg_h.status_h.peek(status, rdata);
-                des = top_reg_h.status_h.get();
-                mir = top_reg_h.status_h.get_mirrored_value();
-                $display("\t\t\t rdata :  busy = %0h | done = %0h | error = %0h | paused = %0h | cs = %0h | fifo_lvl = %0h", rdata[0], rdata[1], rdata[2], rdata[3], rdata[7:4], rdata[15:8] ); 
-                $display("\t\t\t rdata :  %b", rdata);
-                `uvm_info("SEQ-STATUS", $sformatf(" BD Read: des = %0h | mir = %0h\n ", des, mir), UVM_LOW)
-*/
+
                 top_reg_h.status_h.mirror(status, UVM_CHECK);
                 des = top_reg_h.status_h.get();
                 mir = top_reg_h.status_h.get_mirrored_value();
@@ -854,12 +832,7 @@ class sample_seq extends uvm_sequence#(dma_seq_item);
                 `uvm_info("SEQ-STATUS", $sformatf(" FD Read: des = %0h | mir = %0h", des, mir), UVM_LOW)
 
                 // 7. TRANSFER_COUNT ro
-/*
-                top_reg_h.transfer_count_h.peek(status, rdata);
-                des = top_reg_h.transfer_count_h.get();
-                mir = top_reg_h.transfer_count_h.get_mirrored_value();
-                `uvm_info("SEQ-TRANSFER_COUNT", $sformatf(" BD Read: des = %0h | mir = %0h\n ", des, mir), UVM_LOW)
-*/
+
                 top_reg_h.transfer_count_h.mirror(status, UVM_CHECK);
                 des = top_reg_h.transfer_count_h.get();
                 mir = top_reg_h.transfer_count_h.get_mirrored_value();
