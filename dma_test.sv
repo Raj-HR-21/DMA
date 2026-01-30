@@ -52,33 +52,6 @@ class dma_test_1 extends uvm_test;
 endclass: dma_test_1
 
 // --------------------------------------------------------
-class dma_test_2 extends uvm_test;
-
-    `uvm_component_utils(dma_test_2)
-    dma_env env_h;
-    reg_seq_2 seq;
-
-    function new(string name = "dma_test_2", uvm_component parent = null);
-        super.new(name, parent);
-    endfunction: new
-    function void build_phase(uvm_phase phase);
-        super.build_phase(phase);
-        env_h = dma_env::type_id::create("env_h", this);
-
-    endfunction: build_phase
-
-    task run_phase(uvm_phase phase);
-
-        seq = reg_seq_2::type_id::create("seq");
-        phase.raise_objection(this);
-        seq.top_reg_h = env_h.top_reg_h;
-        seq.start(env_h.agt_h.sqr_h);
-        phase.drop_objection(this);
-    endtask: run_phase
-
-endclass: dma_test_2
-
-// --------------------------------------------------------
 class intr_test extends uvm_test;
 
     `uvm_component_utils(intr_test)

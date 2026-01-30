@@ -4,11 +4,6 @@ class reg_intr extends uvm_reg;
     rand uvm_reg_field intr_mask;   //rw
 
     covergroup cg_intr;
-/*        cp_status: coverpoint intr_status.value[15:0]{
-            bins min = {0};
-            bins max = {16'hFFFF};
-            bins other_vals = {[16'h1 : 16'hFFFE]};
-        }*/
         cp_mask: coverpoint intr_mask.value[15:0] {
             bins vals[3] = {[16'h1 : 16'hFFFF]};
         }
@@ -58,11 +53,6 @@ class reg_ctrl extends uvm_reg;
             bins min = {0};
             bins max = {1};
         }
-/*        cp_reserved: coverpoint reserved.value[31:17] {
-            bins min = {0};
-            bins max = {15'h7FFF};
-            bins other_vals = {[15'h1 : 15'h7FFE]};
-        }*/
     endgroup: cg_ctrl
 
     function new(string name = "reg_ctrl");
