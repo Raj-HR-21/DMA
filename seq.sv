@@ -804,7 +804,7 @@ class sample_seq extends uvm_sequence#(dma_seq_item);
 
                 // 7. TRANSFER_COUNT ro
 
-                top_reg_h.transfer_count_h.mirror(status, UVM_STATUS);
+                top_reg_h.transfer_count_h.mirror(status, UVM_CHECK);
                 des = top_reg_h.transfer_count_h.get();
                 mir = top_reg_h.transfer_count_h.get_mirrored_value();
                 `uvm_info("SEQ-TRANSFER_COUNT", $sformatf(" FD Read: des = %0h | mir = %0h", des, mir), UVM_LOW)
