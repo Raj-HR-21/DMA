@@ -287,42 +287,9 @@ class reg_error_status extends uvm_reg;
     rand uvm_reg_field error_code;		//ro
     rand uvm_reg_field error_addr_offset; 	//ro
 
-    covergroup cg_error_status;
-        cp_bus_error: coverpoint bus_error.value[0]{
-            bins min = {0};
-            bins max = {1};
-        }
-        cp_timeout_error: coverpoint timeout_error.value[1]{
-            bins min = {0};
-            bins max = {1};
-        }
-        cp_alignment_error: coverpoint alignment_error.value[2]{
-            bins min = {0};
-            bins max = {1};
-        }
-        cp_overflow_error: coverpoint overflow_error.value[3]{
-            bins min = {0};
-            bins max = {1};
-        }
-        cp_underflow_error: coverpoint underflow_error.value[4]{
-            bins min = {0};
-            bins max = {1};
-        }
-    endgroup: cg_error_status
-
     function new(string name = "reg_error_status");
-        super.new(name, 32, UVM_CVR_FIELD_VALS);
-        if(has_coverage(UVM_CVR_FIELD_VALS)) 
-            cg_error_status = new();
+        super.new(name, 32, UVM_NO_COVERAGE);
     endfunction: new
-
-    virtual function void sample(uvm_reg_data_t data, uvm_reg_data_t byte_en, bit is_read, uvm_reg_map map);
-        cg_error_status.sample();
-    endfunction: sample
-    virtual function void sample_values();
-        super.sample_values();
-        cg_error_status.sample();
-    endfunction: sample_values
 
     function void build();
         bus_error = uvm_reg_field::type_id::create("bus_error");
